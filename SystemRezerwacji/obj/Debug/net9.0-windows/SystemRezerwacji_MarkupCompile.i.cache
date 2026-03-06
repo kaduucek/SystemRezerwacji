@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\projekty_cs\SystemRezerwacji\obj\Debug\net9.0-windows\
+F:\Projekty_cs\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\
 SystemRezerwacji
 none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP
-C:\projekty_cs\SystemRezerwacji\App.xaml
-11407045341
+F:\Projekty_cs\SystemRezerwacji-main\SystemRezerwacji\App.xaml
+1-1644662438
 
-6926056758
-200161758370
-MainWindow.xaml;
+6-1570809398
+201668129756
+Views\MainWindow.xaml;
 
-False
+True
 
