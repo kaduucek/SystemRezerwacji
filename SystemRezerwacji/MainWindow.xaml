@@ -6,7 +6,48 @@
         xmlns:local="clr-namespace:SystemRezerwacji"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="10">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Pacjent:" Grid.Row="0" Grid.Column="0" Margin="5"/>
+        <TextBox x:Name="PatientNameBox"
+        Grid.Row="0"
+        Grid.Column="1"
+        Margin="5"/>
+
+        <TextBlock Text="Lekarz:" Grid.Row="1" Grid.Column="0" Margin="5"/>
+        <TextBox x:Name="DoctorNameBox"
+        Grid.Row="1"
+        Grid.Column="1"
+        Margin="5"/>
+
+        <TextBlock Text="Data wizyty:" Grid.Row="2" Grid.Column="0" Margin="5"/>
+        <DatePicker x:Name="DatePicker"
+           Grid.Row="2"
+           Grid.Column="1"
+           Margin="5"/>
+
+        <TextBlock Text="Notatki:" Grid.Row="3" Grid.Column="0" Margin="5"/>
+        <TextBox x:Name="NotesBox"
+        Grid.Row="3"
+        Grid.Column="1"
+        Margin="5"
+        Height="60"
+        AcceptsReturn="True"/>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
     </Grid>
+
 </Window>
