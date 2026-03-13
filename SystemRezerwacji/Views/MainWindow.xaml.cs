@@ -16,7 +16,7 @@ namespace SystemRezerwacji.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
- public partial class MainWindow : Window
+public partial class MainWindow : Window
 {
     private AppointmentService appointmentService = new AppointmentService();
 
@@ -48,11 +48,21 @@ namespace SystemRezerwacji.Views
 
 
     }
+
+    private void DeleteAppointment_Click(object sender, RoutedEventArgs e)
+    {
+        if (AppointmentsGrid.SelectedItem is Appointment selected)
+        {
+            appointmentService.Appointments.Remove(selected);
+            AppointmentsGrid.Items.Refresh();
+        }
+    }
        
 
   
 
 }
+
 
 
 
