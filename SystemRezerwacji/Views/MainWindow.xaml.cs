@@ -16,7 +16,7 @@ namespace SystemRezerwacji.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-  public partial class MainWindow : Window
+ public partial class MainWindow : Window
 {
     private AppointmentService appointmentService = new AppointmentService();
 
@@ -34,20 +34,10 @@ namespace SystemRezerwacji.Views
             return;
         }
 
-        var appointment = new Appointment
-        {
-            PatientName = PatientNameBox.Text,
-            DoctorName = DoctorNameBox.Text,
-            AppointmentDate = DatePicker.SelectedDate.Value,
-            Notes = NotesBox.Text
-        };
-        appointmentService.Appointments.Add(appointment);
-        AppointmentsGrid.Items.Refresh();
-        ClearForm();
-        MessageBox.Show("Wizyta została dodana");
+       
 
-
-    }
+  
 
 }
+
 
