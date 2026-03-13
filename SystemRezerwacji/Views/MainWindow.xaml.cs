@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using System.Windows;
+using DoctorAppointmentApp.Models;
+using DoctorAppointmentApp.Services;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -14,11 +16,14 @@ namespace SystemRezerwacji.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
-    {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-    }
+   public partial class MainWindow : Window
+{
+   private AppointmentService appointmentService = new AppointmentService();
+
+   public MainWindow()
+   {
+       InitializeComponent();
+   }
+}
+
 }
