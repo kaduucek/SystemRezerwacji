@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Windows;
-using DoctorAppointmentApp.Models;
-using DoctorAppointmentApp.Services;
+using SystemRezerwacji.Models;
+using SystemRezerwacji.Services;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -16,51 +16,64 @@ namespace SystemRezerwacji.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-public partial class MainWindow : Window
-{
-    private AppointmentService appointmentService = new AppointmentService();
-
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        AppointmentsGrid.ItemsSource = appointmentService.Appointments;
+        private AppointmentService appointmentService = new AppointmentService();
 
-    }
-    private void AddAppointment_Click(object sender, RoutedEventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(PatientNameBox.Text))
+        public MainWindow()
         {
-            MessageBox.Show("Podaj imię pacjenta");
-            return;
+            InitializeComponent();
+            AppointmentsGrid.ItemsSource = appointmentService.Appointments;
+
         }
-
-        var appointment = new Appointment
+        private void AddAppointment_Click(object sender, RoutedEventArgs e)
         {
-            PatientName = PatientNameBox.Text,
-            DoctorName = DoctorNameBox.Text,
-            AppointmentDate = DatePicker.SelectedDate.Value,
-            Notes = NotesBox.Text
-        };
-        appointmentService.Appointments.Add(appointment);
-        AppointmentsGrid.Items.Refresh();
-        ClearForm();
-        MessageBox.Show("Wizyta została dodana");
+            if (string.IsNullOrWhiteSpace(PatientNameBox.Text))
+            {
+                MessageBox.Show("Podaj imię pacjenta");
+                return;
+            }
 
-
-    }
-
-    private void DeleteAppointment_Click(object sender, RoutedEventArgs e)
-    {
-        if (AppointmentsGrid.SelectedItem is Appointment selected)
-        {
-            appointmentService.Appointments.Remove(selected);
+            var appointment = new Appointment
+            {
+                PatientName = PatientNameBox.Text,
+                DoctorName = DoctorNameBox.Text,
+                AppointmentDate = DatePicker.SelectedDate.Value,
+                Notes = NotesBox.Text
+            };
+            appointmentService.Appointments.Add(appointment);
             AppointmentsGrid.Items.Refresh();
+            ClearForm();
+            MessageBox.Show("Wizyta została dodana");
+
+
         }
+        private void ClearForm_Click(object sender, RoutedEventArgs e)
+        {
+            ClearForm();
+        }
+
+
+        private void DeleteAppointment_Click(object sender, RoutedEventArgs e)
+        {
+            if (AppointmentsGrid.SelectedItem is Appointment selected)
+            {
+                appointmentService.Appointments.Remove(selected);
+                AppointmentsGrid.Items.Refresh();
+            }
+        }
+
+        private void ClearForm()
+        {
+            PatientNameBox.Text = "";
+            DoctorNameBox.Text = "";
+            NotesBox.Text = "";
+            DatePicker.SelectedDate = null;
+        }
+
+
+
     }
-       
-
-  
-
 }
 
 
