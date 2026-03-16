@@ -15,6 +15,7 @@ namespace SystemRezerwacji.Views
         {
             InitializeComponent();
             AppointmentsGrid.ItemsSource = appointmentService.Appointments;
+            DatePicker.SelectedDate = DateTime.Today;
             UpdateTitle();
         }
 
