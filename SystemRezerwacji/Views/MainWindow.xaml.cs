@@ -64,8 +64,18 @@ namespace SystemRezerwacji.Views
         {
             if (AppointmentsGrid.SelectedItem is Appointment selected)
             {
-                appointmentService.Appointments.Remove(selected);
-                AppointmentsGrid.Items.Refresh();
+                MessageBoxResult result = MessageBox.Show(
+                    $"Czy na pewno chcesz usunąć wizytę pacjenta {selected.PatientName}?", 
+                    "Potwierdzenie usunięcia", 
+                    MessageBoxButton.YesNo, 
+                    MessageBoxImage.Question);
+        
+                if (result == MessageBoxResult.Yes)
+                {
+                    appointmentService.Appointments.Remove(selected);
+                    AppointmentsGrid.Items.Refresh();
+                    UpdateTitle();
+                }
             }
         }
 
