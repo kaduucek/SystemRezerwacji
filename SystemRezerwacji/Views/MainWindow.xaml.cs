@@ -31,6 +31,11 @@ namespace SystemRezerwacji.Views
                 MessageBox.Show("Proszę wybrać poprawną datę (dzisiejszą lub przyszłą).");
                 return;
             }
+            if (string.IsNullOrWhiteSpace(DoctorNameBox.Text))
+            {
+                MessageBox.Show("Proszę wpisać imię i nazwisko lekarza.");
+                return;
+            }
 
             var appointment = new Appointment
             {
