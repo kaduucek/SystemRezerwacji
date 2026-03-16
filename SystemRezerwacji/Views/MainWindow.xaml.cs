@@ -1,21 +1,12 @@
-﻿using System.Text;
+using System;
+using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using SystemRezerwacji.Models;
 using SystemRezerwacji.Services;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SystemRezerwacji.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private AppointmentService appointmentService = new AppointmentService();
@@ -24,8 +15,9 @@ namespace SystemRezerwacji.Views
         {
             InitializeComponent();
             AppointmentsGrid.ItemsSource = appointmentService.Appointments;
-
+            UpdateTitle();
         }
+
         private void AddAppointment_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(PatientNameBox.Text))
@@ -47,18 +39,13 @@ namespace SystemRezerwacji.Views
                 AppointmentDate = DatePicker.SelectedDate.Value,
                 Notes = NotesBox.Text
             };
+
             appointmentService.Appointments.Add(appointment);
             AppointmentsGrid.Items.Refresh();
             ClearForm();
+            UpdateTitle();
             MessageBox.Show("Wizyta została dodana");
-
-
         }
-        private void ClearForm_Click(object sender, RoutedEventArgs e)
-        {
-            ClearForm();
-        }
-
 
         private void DeleteAppointment_Click(object sender, RoutedEventArgs e)
         {
@@ -69,7 +56,7 @@ namespace SystemRezerwacji.Views
                     "Potwierdzenie usunięcia", 
                     MessageBoxButton.YesNo, 
                     MessageBoxImage.Question);
-        
+
                 if (result == MessageBoxResult.Yes)
                 {
                     appointmentService.Appointments.Remove(selected);
@@ -77,6 +64,11 @@ namespace SystemRezerwacji.Views
                     UpdateTitle();
                 }
             }
+        }
+
+        private void ClearForm_Click(object sender, RoutedEventArgs e)
+        {
+            ClearForm();
         }
 
         private void ClearForm()
@@ -87,11 +79,9 @@ namespace SystemRezerwacji.Views
             DatePicker.SelectedDate = null;
         }
 
-
-
+        private void UpdateTitle()
+        {
+            this.Title = $"System Rezerwacji - Liczba wizyt: {appointmentService.Appointments.Count}";
+        }
     }
 }
-
-
-
-
