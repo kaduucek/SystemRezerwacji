@@ -34,6 +34,12 @@ namespace SystemRezerwacji.Views
                 return;
             }
 
+            if (DatePicker.SelectedDate == null || DatePicker.SelectedDate < DateTime.Today)
+            {
+                MessageBox.Show("Proszę wybrać poprawną datę (dzisiejszą lub przyszłą).");
+                return;
+            }
+
             var appointment = new Appointment
             {
                 PatientName = PatientNameBox.Text,
