@@ -147,49 +147,30 @@ Aplikacja przeznaczona jest dla **pacjentów przychodni**.
 ## Architektura systemu
 
 System został zaprojektowany w architekturze warstwowej z wyraźnym podziałem odpowiedzialności:
-┌─────────────────────────────────────────────────────────────────┐
-│ WARSTWA PREZENTACJI │
-│ ┌───────────────────────────────────────────────────────────┐ │
-│ │ Aplikacja WPF (MVVM) │ │
-│ │ • Widoki (XAML) │ │
-│ │ • ViewModele │ │
-│ │ • Walidacja danych wejściowych │ │
-│ └───────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────────────────────────┐
-│ WARSTWA LOGIKI BIZNESOWEJ │
-│ ┌───────────────────────────────────────────────────────────┐ │
-│ │ Biblioteka klas .NET │ │
-│ │ • Reguły biznesowe │ │
-│ │ • Walidacja terminów │ │
-│ │ • Zarządzanie stanem │ │
-│ └───────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────────────────────────┐
-│ WARSTWA DOSTĘPU DO DANYCH (DAL) │
-│ ┌───────────────────────────────────────────────────────────┐ │
-│ │ Entity Framework Core │ │
-│ │ • Repozytoria │ │
-│ │ • Unit of Work │ │
-│ │ • Migracje │ │
-│ └───────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────────────────────────┐
-│ BAZA DANYCH │
-│ ┌───────────────────────────────────────────────────────────┐ │
-│ │ Microsoft SQL Server │ │
-│ │ • Tabele │ │
-│ │ • Klucze główne/obce │ │
-│ │ • Indeksy │ │
-│ │ • Transakcje │ │
-│ └───────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+###  Warstwa prezentacji
+**Aplikacja WPF (MVVM)**
+- Widoki (XAML)
+- ViewModele
+- Walidacja danych wejściowych
+
+###  Warstwa logiki biznesowej
+**Biblioteka klas .NET**
+- Reguły biznesowe
+- Walidacja terminów
+- Zarządzanie stanem
+
+###  Warstwa dostępu do danych (DAL)
+**Entity Framework Core**
+- Repozytoria
+- Unit of Work
+- Migracje
+
+###  Baza danych
+**Microsoft SQL Server**
+- Tabele
+- Klucze główne/obce
+- Indeksy
+- Transakcje
 
 ### Przepływ danych
 [UI: WPF/MVVM] ⇄ [ViewModel] ⇄ [Warstwa Biznesowa] ⇄ [DAL (Entity Framework)] ⇄ [SQL Server]
