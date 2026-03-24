@@ -151,7 +151,8 @@ System został zaprojektowany w architekturze warstwowej z wyraźnym podziałem 
 │ WARSTWA PREZENTACJI │
 │ ┌───────────────────────────────────────────────────────────┐ │
 │ │ Aplikacja WPF (MVVM) │ │
-│ │ • Widoki (XAML) • ViewModele │ │
+│ │ • Widoki (XAML) │ │
+│ │ • ViewModele │ │
 │ │ • Walidacja danych wejściowych │ │
 │ └───────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
@@ -161,7 +162,8 @@ System został zaprojektowany w architekturze warstwowej z wyraźnym podziałem 
 │ WARSTWA LOGIKI BIZNESOWEJ │
 │ ┌───────────────────────────────────────────────────────────┐ │
 │ │ Biblioteka klas .NET │ │
-│ │ • Reguły biznesowe • Walidacja terminów │ │
+│ │ • Reguły biznesowe │ │
+│ │ • Walidacja terminów │ │
 │ │ • Zarządzanie stanem │ │
 │ └───────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
@@ -171,7 +173,9 @@ System został zaprojektowany w architekturze warstwowej z wyraźnym podziałem 
 │ WARSTWA DOSTĘPU DO DANYCH (DAL) │
 │ ┌───────────────────────────────────────────────────────────┐ │
 │ │ Entity Framework Core │ │
-│ │ • Repozytoria • Unit of Work • Migracje │ │
+│ │ • Repozytoria │ │
+│ │ • Unit of Work │ │
+│ │ • Migracje │ │
 │ └───────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 │
@@ -180,7 +184,9 @@ System został zaprojektowany w architekturze warstwowej z wyraźnym podziałem 
 │ BAZA DANYCH │
 │ ┌───────────────────────────────────────────────────────────┐ │
 │ │ Microsoft SQL Server │ │
-│ │ • Tabele • Klucze główne/obce • Indeksy │ │
+│ │ • Tabele │ │
+│ │ • Klucze główne/obce │ │
+│ │ • Indeksy │ │
 │ │ • Transakcje │ │
 │ └───────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
