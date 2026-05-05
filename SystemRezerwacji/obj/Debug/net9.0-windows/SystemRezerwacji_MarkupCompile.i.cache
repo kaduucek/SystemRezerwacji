@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\janus\Desktop\SystemRezerwacji\obj\Debug\net9.0-windows\
+C:\Users\Zenon\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\
 SystemRezerwacji
 none
 false
-TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\janus\Desktop\SystemRezerwacji\App.xaml
-1-1644662438
+TRACE;DEBUG;NET;NET9_0;NETCOREAPP
+C:\Users\Zenon\Desktop\SystemRezerwacji-main\SystemRezerwacji\App.xaml
+61295945156
 
-14-699762445
-230335659243
-Views\MainWindow.xaml;
+19226045649
+230336990575
+Views\EdytujWizyteView.xaml;Views\LoginView.xaml;Views\MainWindow.xaml;Views\NowaWizytaView.xaml;Views\RegisterView.xaml;Views\WizytyView.xaml;
 
 False
 
