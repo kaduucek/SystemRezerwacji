@@ -40,7 +40,7 @@ namespace SystemRezerwacji.Services
                 Email = email,
                 Imię = firstName,        // Jeżeli w Twoim modelu jest "Imie" bez kreski, usuń kreskę
                 Nazwisko = lastName,
-                HaszHasła = zahasowaneHaslo, // Zapisujemy wygenerowany HASH
+                Hasz = zahasowaneHaslo, // Zapisujemy wygenerowany HASH
                 DataRejestracji = DateTime.Now
             };
 
@@ -63,7 +63,7 @@ namespace SystemRezerwacji.Services
                 return false; // Pacjent o takim emailu nie istnieje
 
             // ZADANIE T-05: Weryfikacja czy wpisane hasło pasuje do hasha z bazy danych
-            bool czyHasloPoprawne = HaszowanieHasel.WeryfikujHaslo(password, pacjent.HaszHasła);
+            bool czyHasloPoprawne = HaszowanieHasel.WeryfikujHaslo(password, pacjent.Hasz);
 
             return czyHasloPoprawne;
         }
