@@ -55,8 +55,9 @@ namespace SystemRezerwacji.ViewModels
                 NowaData = Wizyta.Data;
                 NowaGodzina = Wizyta.Godzina;
 
-                DostepniLekarze = await _context.Lekarze.ToListAsync();
-                WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.Id == Wizyta.LekarzId);
+            // OPTYMALIZACJA LINQ: Pobieranie listy lekarzy tylko do odczytu (dla ComboBoxa)
+            DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
+            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.Id == Wizyta.LekarzId);
             }
         }
 
