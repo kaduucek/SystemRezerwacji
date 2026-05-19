@@ -57,7 +57,9 @@ namespace SystemRezerwacji.Services
                 return false;
 
             // Pobranie pacjenta z bazy Przychodnia na podstawie wpisanego emailu
-            var pacjent = await _context.Pacjenci.SingleOrDefaultAsync(p => p.Email == email);
+                    var pacjent = await _context.Pacjenci
+                            .AsNoTracking() // <--- OPTYMALIZACJA LINQ
+                            .SingleOrDefaultAsync(p => p.Email == email);
             
             if (pacjent == null)
                 return false; // Pacjent o takim emailu nie istnieje
