@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.EntityFrameworkCore; // Upewnij się, że ten using jest na samej górze pliku
 
 
 namespace SystemRezerwacji.Models
@@ -21,13 +22,14 @@ namespace SystemRezerwacji.Models
             WczytajDane();
         }
 
-        public void WczytajDane()
-        {
-            var dane = _context.Pacjenci.ToList();
 
-            
-            ListaPacjentow = new ObservableCollection<Pacjent>(dane);
-        }
+public void WczytajDane()
+{
+    // OPTYMALIZACJA LINQ: Dodano AsNoTracking() do odczytu danych
+    var dane = _context.Pacjenci.AsNoTracking().ToList();
+    
+    ListaPacjentow = new ObservableCollection<Pacjent>(dane);
+}
     }
 }
 
