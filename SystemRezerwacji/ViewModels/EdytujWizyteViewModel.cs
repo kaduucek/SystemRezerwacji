@@ -48,27 +48,25 @@ namespace SystemRezerwacji.ViewModels
         private async Task LoadData()
         {
             Wizyta = await _context.Wizyty
-                .Include(w => w.Lekarz)
-                .FirstOrDefaultAsync(w => w.Id == _idWizyty);
+                .Include(w => w.IdLekarza)
+                .FirstOrDefaultAsync(w => w.IdWizyty == _idWizyty);
 
             if (Wizyta != null)
             {
-                NowaData = Wizyta.Data;
-                NowaGodzina = Wizyta.Godzina;
+                NowaData = Wizyta.DataGodzinaRozpoczecia;
 
             // OPTYMALIZACJA LINQ: Pobieranie listy lekarzy tylko do odczytu (dla ComboBoxa)
             DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
-            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.Id == Wizyta.LekarzId);
+            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.IdLekarza == Wizyta.IdLekarza);
             }
         }
 
         private async Task Zapisz()
         {
             bool zajety = await _context.Wizyty
-                .AnyAsync(w => w.LekarzId == WybranyLekarz.Id &&
-                               w.Data == NowaData &&
-                               w.Godzina == NowaGodzina &&
-                               w.Id != _idWizyty);
+                .AnyAsync(w => w.IdLekarza == WybranyLekarz.IdLekarza &&
+                               w.DataGodzinaRozpoczecia == NowaData &&
+                               w.IdWizyty != _idWizyty);
 
             if (zajety)
             {
@@ -82,9 +80,8 @@ namespace SystemRezerwacji.ViewModels
                 return;
             }
 
-            Wizyta.Data = NowaData;
-            Wizyta.Godzina = NowaGodzina;
-            Wizyta.LekarzId = WybranyLekarz.Id;
+            Wizyta.DataGodzinaRozpoczecia = NowaData;
+            Wizyta.IdLekarza = WybranyLekarz.IdLekarza;
 
             _context.Wizyty.Update(Wizyta);
             await _context.SaveChangesAsync();
