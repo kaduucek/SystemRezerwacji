@@ -28,14 +28,11 @@ namespace SystemRezerwacji.Tests
         [Fact]
         public async Task GetAvailableSlotsAsync_ShouldReturnSlots()
         {
-            // Arrange
             var service = new SlotService();
             var testDate = new DateTime(2026, 10, 10);
 
-            // Act
             var result = await service.GetAvailableSlotsAsync(1, testDate);
 
-            // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result);
         }

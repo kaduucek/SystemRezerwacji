@@ -24,5 +24,10 @@ namespace SystemRezerwacji.Views
         {
             InitializeComponent();
         }
+
+        internal void ShowDialog()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

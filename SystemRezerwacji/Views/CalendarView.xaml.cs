@@ -11,7 +11,7 @@ namespace SystemRezerwacji.Views
         public CalendarView()
         {
             InitializeComponent();
-            _slotService = new SlotService();
+            _slotService = new SlotService(new PrzychodniaContext());
         }
 
         private async void AppointmentCalendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
@@ -20,10 +20,8 @@ namespace SystemRezerwacji.Views
             {
                 DateTime selectedDate = AppointmentCalendar.SelectedDate.Value;
                 
-                // Pobieramy sloty dla przykładowego ID lekarza = 1
                 var slots = await _slotService.GetAvailableSlotsAsync(1, selectedDate);
                 
-                // Odświeżamy listę w UI
                 SlotsList.ItemsSource = slots;
             }
         }

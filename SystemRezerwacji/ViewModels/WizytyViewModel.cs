@@ -9,20 +9,21 @@ using SystemRezerwacji.Views;
 
 namespace SystemRezerwacji.ViewModels
 {
-    public IRelayCommand EdytujWizyteCommand { get; }
 
-    public WizytyViewModel()
+    public class WizytyViewModel()
     {
-        EdytujWizyteCommand = new RelayCommand<int>(EdytujWizyte);
-    }
+        EdytujWizyte = new RelayCommand<int>(EdytujWizyte);
+    
+        public IRelayCommand EdytujWizyteCommand { get; } 
 
-    private void EdytujWizyte(int idWizyty)
-    {
-        var edytujViewModel = new EdytujWizyteViewModel(idWizyty);
-        var okno = new EdytujWizyteView();
-        okno.DataContext = edytujViewModel;
-        okno.ShowDialog();
+        private void EdytujWizyte(int idWizyty)
+        {
+            var edytujViewModel = new EdytujWizyteViewModel(idWizyty);
+            var okno = new EdytujWizyteView();
+            okno.DataContext = edytujViewModel;
+            okno.ShowDialog();
 
-        LoadWizyty(); 
+            LoadWizyty();
+        }
     }
 }

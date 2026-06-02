@@ -1,0 +1,9 @@
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\SystemRezerwacji.csproj.AssemblyReference.cache
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\Views\WizytyView.baml
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\Views\LoginView.g.cs
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\Views\NowaWizytaView.g.cs
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\Views\RegisterView.g.cs
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\Views\WizytyView.g.cs
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\SystemRezerwacji_MarkupCompile.cache
+C:\Users\janus\Desktop\SystemRezerwacji-main\SystemRezerwacji\obj\Debug\net9.0-windows\SystemRezerwacji_MarkupCompile.lref

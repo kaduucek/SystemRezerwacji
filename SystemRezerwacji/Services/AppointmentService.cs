@@ -9,6 +9,6 @@ namespace SystemRezerwacji.Services
 {
     public class AppointmentService
     {
-        public List<Appointment> Appointments { get; set; } = new List<Appointment>();
+        public List<Wizyta> Wizyty { get; set; } = new List<Wizyta>();
     }
 }

@@ -11,6 +11,8 @@ public class PrzychodniaContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Server=LAPTOK;Database=PrzychodniaDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        optionsBuilder.UseSqlServer(@"Server=LAPTOK;Database=Przychodnia;Trusted_Connection=True;");
     }
+    public DbSet<HistoriaMedyczna> HistorieMedyczne { get; set; }
+    public DbSet<Dostepnosc> Dostepnosci { get; set; }
 }
