@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; 
-using SystemRezerwacji.Models; 
+using Microsoft.EntityFrameworkCore;
+using SystemRezerwacji.Models;
 
 namespace SystemRezerwacji.Services
 {
@@ -11,10 +11,13 @@ namespace SystemRezerwacji.Services
     {
         private readonly PrzychodniaContext _context;
 
+        // Produkcja: w³asny kontekst (LocalDB)
         public SlotService()
         {
+            _context = new PrzychodniaContext();
         }
 
+        // Testy: wstrzykniêty kontekst (np. In-Memory)
         public SlotService(PrzychodniaContext context)
         {
             _context = context;
@@ -22,31 +25,29 @@ namespace SystemRezerwacji.Services
 
         public async Task<List<DateTime>> GetAvailableSlotsAsync(int doctorId, DateTime date)
         {
-            var availableSlots = new List<DateTime>();
-
-           
             var zajeteTerminy = await _context.Wizyty
                 .AsNoTracking()
                 .Where(w => w.IdLekarza == doctorId
-                && w.DataGodzinaRozpoczecia.Date == date.Date
-                && w.Status == WizytaStatus.Planned).Select(w => w.DataGodzinaRozpoczecia)
+                            && w.DataGodzinaRozpoczecia.Date == date.Date
+                            && w.Status == WizytaStatus.Planned)
+                .Select(w => w.DataGodzinaRozpoczecia)
                 .ToListAsync();
 
-            DateTime startTime = date.Date.AddHours(8);
-            DateTime endTime = date.Date.AddHours(16);
-            TimeSpan slotDuration = TimeSpan.FromMinutes(30);
+            var sloty = new List<DateTime>();
 
-            DateTime currentSlot = startTime;
-            while (currentSlot < endTime)
+            // Godziny pracy przychodni 7:00-20:00 (zgodnie z README), sloty co 30 min
+            DateTime start = date.Date.AddHours(7);
+            DateTime koniec = date.Date.AddHours(20);
+            TimeSpan krok = TimeSpan.FromMinutes(30);
+
+            for (DateTime slot = start; slot < koniec; slot = slot.Add(krok))
             {
-                if (!zajeteTerminy.Contains(currentSlot))
-                {
-                    availableSlots.Add(currentSlot);
-                }
-                currentSlot = currentSlot.Add(slotDuration);
+                // pomijamy terminy zajête oraz godziny, które ju¿ minê³y
+                if (!zajeteTerminy.Contains(slot) && slot > DateTime.Now)
+                    sloty.Add(slot);
             }
 
-            return availableSlots;
+            return sloty;
         }
     }
 }

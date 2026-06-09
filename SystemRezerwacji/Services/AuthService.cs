@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using SystemRezerwacji.Models; 
+using SystemRezerwacji.Models;
 
 namespace SystemRezerwacji.Services
 {
     public interface IAuthService
     {
         Task<bool> RegisterPatientAsync(string email, string password, string firstName, string lastName);
-        Task<bool> LoginAsync(string email, string password);
+        Task<Pacjent?> LoginAsync(string email, string password);
     }
 
     public class AuthService : IAuthService
@@ -27,40 +27,36 @@ namespace SystemRezerwacji.Services
 
             bool emailExist = await _context.Pacjenci.AnyAsync(p => p.Email == email);
             if (emailExist)
-                return false; 
-
-            string zahasowaneHaslo = HaszowanieHasel.GenerujHasz(password);
+                return false;
 
             var nowyPacjent = new Pacjent
             {
                 Email = email,
-                Imie = firstName,       
+                Imie = firstName,
                 Nazwisko = lastName,
-                Hasz = zahasowaneHaslo, 
+                Hasz = HaszowanieHasel.GenerujHasz(password),
                 DataRejestracji = DateTime.Now
             };
 
             _context.Pacjenci.Add(nowyPacjent);
             await _context.SaveChangesAsync();
-
-            return true; 
+            return true;
         }
 
-        public async Task<bool> LoginAsync(string email, string password)
+        // Zwraca pacjenta przy poprawnym logowaniu, w przeciwnym razie null
+        public async Task<Pacjent?> LoginAsync(string email, string password)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-                return false;
+                return null;
 
-                    var pacjent = await _context.Pacjenci
-                            .AsNoTracking() 
-                            .SingleOrDefaultAsync(p => p.Email == email);
-            
+            var pacjent = await _context.Pacjenci
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.Email == email);
+
             if (pacjent == null)
-                return false; 
+                return null;
 
-            bool czyHasloPoprawne = HaszowanieHasel.WeryfikujHaslo(password, pacjent.Hasz);
-
-            return czyHasloPoprawne;
+            return HaszowanieHasel.WeryfikujHaslo(password, pacjent.Hasz) ? pacjent : null;
         }
     }
 }
