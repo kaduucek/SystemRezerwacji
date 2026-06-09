@@ -1,0 +1,7 @@
+<Window x:Class="SystemRezerwacji.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="System rezerwacji – logowanie" Height="460" Width="520"
+        WindowStartupLocation="CenterScreen">
+    <ContentControl x:Name="Host"/>
+</Window>
