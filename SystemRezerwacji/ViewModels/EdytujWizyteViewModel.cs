@@ -1,118 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using SystemRezerwacji.Models;
-
-namespace SystemRezerwacji.ViewModels
-{
-    public partial class EdytujWizyteViewModel : ObservableObject
-    {
-        private readonly int _idWizyty;
-        private readonly PrzychodniaContext _context; 
-
-        [ObservableProperty]
-        private Wizyta _wizyta;
-
-        [ObservableProperty]
-        private List<Lekarz> _dostepniLekarze;
-
-        [ObservableProperty]
-        private Lekarz _wybranyLekarz;
-
-        [ObservableProperty]
-        private DateTime _nowaData;
-
-        [ObservableProperty]
-        private TimeSpan _nowaGodzina;
-
-        public IRelayCommand ZapiszCommand { get; }
-        public IRelayCommand AnulujCommand { get; }
-
-        public EdytujWizyteViewModel(int idWizyty)
-        {
-            _idWizyty = idWizyty;
-            _context = new PrzychodniaContext(); 
-
-            ZapiszCommand = new RelayCommand(async () => await Zapisz(), () => CzyMoznaZapisac());
-            AnulujCommand = new RelayCommand(Anuluj);
-
-           
-            Task.Run(async () => await LoadData());
-        }
-
-        private async Task LoadData()
-        {
-            Wizyta = await _context.Wizyty
-                .Include(w => w.IdLekarza)
-                .FirstOrDefaultAsync(w => w.IdWizyty == _idWizyty);
-
-            if (Wizyta != null)
-            {
-                NowaData = Wizyta.DataGodzinaRozpoczecia;
-
-            // OPTYMALIZACJA LINQ: Pobieranie listy lekarzy tylko do odczytu (dla ComboBoxa)
-            DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
-            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.IdLekarza == Wizyta.IdLekarza);
-            }
-        }
-
-        private async Task Zapisz()
-        {
-            bool zajety = await _context.Wizyty
-                .AnyAsync(w => w.IdLekarza == WybranyLekarz.IdLekarza &&
-                               w.DataGodzinaRozpoczecia == NowaData &&
-                               w.IdWizyty != _idWizyty);
-
-            if (zajety)
-            {
-                MessageBox.Show("Wybrany termin jest już zajęty.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (NowaData < DateTime.Now.AddHours(24))
-            {
-                MessageBox.Show("Nie można zmienić wizyty na mniej niż 24 godziny przed terminem.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            Wizyta.DataGodzinaRozpoczecia = NowaData;
-            Wizyta.IdLekarza = WybranyLekarz.IdLekarza;
-
-            _context.Wizyty.Update(Wizyta);
-            await _context.SaveChangesAsync();
-
-            MessageBox.Show("Wizyta została zmieniona.", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
-        }
-
-        private bool CzyMoznaZapisac()
-        {
-            return Wizyta != null && WybranyLekarz != null && NowaData != default && NowaGodzina != default;
-        }
-
-        private void Anuluj()
-        {
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
-        }
-    }
-}
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 using SystemRezerwacji.Models;
 
 namespace SystemRezerwacji.ViewModels
@@ -120,308 +13,96 @@ namespace SystemRezerwacji.ViewModels
     public partial class EdytujWizyteViewModel : ObservableObject
     {
         private readonly int _idWizyty;
-        private readonly PrzychodniaContext _context; 
+        private readonly PrzychodniaContext _context = new();
 
-        [ObservableProperty]
-        private Wizyta _wizyta;
+        [ObservableProperty] private List<Lekarz> _dostepniLekarze = new();
+        [ObservableProperty] private Lekarz? _wybranyLekarz;
+        [ObservableProperty] private DateTime _nowaData = DateTime.Today;
+        [ObservableProperty] private string _nowaGodzina = "08:00";
 
-        [ObservableProperty]
-        private List<Lekarz> _dostepniLekarze;
-
-        [ObservableProperty]
-        private Lekarz _wybranyLekarz;
-
-        [ObservableProperty]
-        private DateTime _nowaData;
-
-        [ObservableProperty]
-        private TimeSpan _nowaGodzina;
-
-        public IRelayCommand ZapiszCommand { get; }
+        public IAsyncRelayCommand ZapiszCommand { get; }
         public IRelayCommand AnulujCommand { get; }
 
         public EdytujWizyteViewModel(int idWizyty)
         {
             _idWizyty = idWizyty;
-            _context = new PrzychodniaContext(); 
-
-            ZapiszCommand = new RelayCommand(async () => await Zapisz(), () => CzyMoznaZapisac());
-            AnulujCommand = new RelayCommand(Anuluj);
-
-           
-            Task.Run(async () => await LoadData());
+            ZapiszCommand = new AsyncRelayCommand(Zapisz);
+            AnulujCommand = new RelayCommand(ZamknijOkno);
+            _ = LoadData();
         }
 
         private async Task LoadData()
         {
-            Wizyta = await _context.Wizyty
-                .Include(w => w.IdLekarza)
+            DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
+
+            var wizyta = await _context.Wizyty
+                .AsNoTracking()
                 .FirstOrDefaultAsync(w => w.IdWizyty == _idWizyty);
 
-            if (Wizyta != null)
+            if (wizyta != null)
             {
-                NowaData = Wizyta.DataGodzinaRozpoczecia;
-
-            // OPTYMALIZACJA LINQ: Pobieranie listy lekarzy tylko do odczytu (dla ComboBoxa)
-            DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
-            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.IdLekarza == Wizyta.IdLekarza);
+                NowaData = wizyta.DataGodzinaRozpoczecia.Date;
+                NowaGodzina = wizyta.DataGodzinaRozpoczecia.ToString("HH:mm");
+                WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.IdLekarza == wizyta.IdLekarza);
             }
         }
 
         private async Task Zapisz()
         {
-            bool zajety = await _context.Wizyty
-                .AnyAsync(w => w.IdLekarza == WybranyLekarz.IdLekarza &&
-                               w.DataGodzinaRozpoczecia == NowaData &&
-                               w.IdWizyty != _idWizyty);
+            if (WybranyLekarz == null)
+            {
+                MessageBox.Show("Wybierz lekarza.", "Uwaga", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!TimeSpan.TryParse(NowaGodzina, out var godzina))
+            {
+                MessageBox.Show("Podaj godzinę w formacie GG:MM (np. 09:30).", "Uwaga",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            DateTime nowyTermin = NowaData.Date + godzina;
+
+            if (nowyTermin < DateTime.Now.AddHours(24))
+            {
+                MessageBox.Show("Nie można ustawić terminu na mniej niż 24 godziny od teraz.", "Błąd",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            bool zajety = await _context.Wizyty.AnyAsync(w =>
+                w.IdLekarza == WybranyLekarz.IdLekarza &&
+                w.DataGodzinaRozpoczecia == nowyTermin &&
+                w.Status == WizytaStatus.Planned &&
+                w.IdWizyty != _idWizyty);
 
             if (zajety)
             {
-                MessageBox.Show("Wybrany termin jest już zajęty.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Wybrany termin jest już zajęty.", "Błąd",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (NowaData < DateTime.Now.AddHours(24))
-            {
-                MessageBox.Show("Nie można zmienić wizyty na mniej niż 24 godziny przed terminem.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+            var wizyta = await _context.Wizyty.FirstOrDefaultAsync(w => w.IdWizyty == _idWizyty);
+            if (wizyta == null)
                 return;
-            }
 
-            Wizyta.DataGodzinaRozpoczecia = NowaData;
-            Wizyta.IdLekarza = WybranyLekarz.IdLekarza;
-
-            _context.Wizyty.Update(Wizyta);
+            wizyta.DataGodzinaRozpoczecia = nowyTermin;
+            wizyta.IdLekarza = WybranyLekarz.IdLekarza;
             await _context.SaveChangesAsync();
 
-            MessageBox.Show("Wizyta została zmieniona.", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
+            MessageBox.Show("Wizyta została zmieniona.", "Sukces",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            ZamknijOkno();
         }
 
-        private bool CzyMoznaZapisac()
+        private void ZamknijOkno()
         {
-            return Wizyta != null && WybranyLekarz != null && NowaData != default && NowaGodzina != default;
-        }
-
-        private void Anuluj()
-        {
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
-        }
-    }
-}
-
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using SystemRezerwacji.Models;
-
-namespace SystemRezerwacji.ViewModels
-{
-    public partial class EdytujWizyteViewModel : ObservableObject
-    {
-        private readonly int _idWizyty;
-        private readonly PrzychodniaContext _context; 
-
-        [ObservableProperty]
-        private Wizyta _wizyta;
-
-        [ObservableProperty]
-        private List<Lekarz> _dostepniLekarze;
-
-        [ObservableProperty]
-        private Lekarz _wybranyLekarz;
-
-        [ObservableProperty]
-        private DateTime _nowaData;
-
-        [ObservableProperty]
-        private TimeSpan _nowaGodzina;
-
-        public IRelayCommand ZapiszCommand { get; }
-        public IRelayCommand AnulujCommand { get; }
-
-        public EdytujWizyteViewModel(int idWizyty)
-        {
-            _idWizyty = idWizyty;
-            _context = new PrzychodniaContext(); 
-
-            ZapiszCommand = new RelayCommand(async () => await Zapisz(), () => CzyMoznaZapisac());
-            AnulujCommand = new RelayCommand(Anuluj);
-
-           
-            Task.Run(async () => await LoadData());
-        }
-
-        private async Task LoadData()
-        {
-            Wizyta = await _context.Wizyty
-                .Include(w => w.IdLekarza)
-                .FirstOrDefaultAsync(w => w.IdWizyty == _idWizyty);
-
-            if (Wizyta != null)
-            {
-                NowaData = Wizyta.DataGodzinaRozpoczecia;
-
-            // OPTYMALIZACJA LINQ: Pobieranie listy lekarzy tylko do odczytu (dla ComboBoxa)
-            DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
-            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.IdLekarza == Wizyta.IdLekarza);
-            }
-        }
-
-        private async Task Zapisz()
-        {
-            bool zajety = await _context.Wizyty
-                .AnyAsync(w => w.IdLekarza == WybranyLekarz.IdLekarza &&
-                               w.DataGodzinaRozpoczecia == NowaData &&
-                               w.IdWizyty != _idWizyty);
-
-            if (zajety)
-            {
-                MessageBox.Show("Wybrany termin jest już zajęty.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (NowaData < DateTime.Now.AddHours(24))
-            {
-                MessageBox.Show("Nie można zmienić wizyty na mniej niż 24 godziny przed terminem.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            Wizyta.DataGodzinaRozpoczecia = NowaData;
-            Wizyta.IdLekarza = WybranyLekarz.IdLekarza;
-
-            _context.Wizyty.Update(Wizyta);
-            await _context.SaveChangesAsync();
-
-            MessageBox.Show("Wizyta została zmieniona.", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
-        }
-
-        private bool CzyMoznaZapisac()
-        {
-            return Wizyta != null && WybranyLekarz != null && NowaData != default && NowaGodzina != default;
-        }
-
-        private void Anuluj()
-        {
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
-        }
-    }
-}
-
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using SystemRezerwacji.Models;
-
-namespace SystemRezerwacji.ViewModels
-{
-    public partial class EdytujWizyteViewModel : ObservableObject
-    {
-        private readonly int _idWizyty;
-        private readonly PrzychodniaContext _context; 
-
-        [ObservableProperty]
-        private Wizyta _wizyta;
-
-        [ObservableProperty]
-        private List<Lekarz> _dostepniLekarze;
-
-        [ObservableProperty]
-        private Lekarz _wybranyLekarz;
-
-        [ObservableProperty]
-        private DateTime _nowaData;
-
-        [ObservableProperty]
-        private TimeSpan _nowaGodzina;
-
-        public IRelayCommand ZapiszCommand { get; }
-        public IRelayCommand AnulujCommand { get; }
-
-        public EdytujWizyteViewModel(int idWizyty)
-        {
-            _idWizyty = idWizyty;
-            _context = new PrzychodniaContext(); 
-
-            ZapiszCommand = new RelayCommand(async () => await Zapisz(), () => CzyMoznaZapisac());
-            AnulujCommand = new RelayCommand(Anuluj);
-
-           
-            Task.Run(async () => await LoadData());
-        }
-
-        private async Task LoadData()
-        {
-            Wizyta = await _context.Wizyty
-                .Include(w => w.IdLekarza)
-                .FirstOrDefaultAsync(w => w.IdWizyty == _idWizyty);
-
-            if (Wizyta != null)
-            {
-                NowaData = Wizyta.DataGodzinaRozpoczecia;
-
-            // OPTYMALIZACJA LINQ: Pobieranie listy lekarzy tylko do odczytu (dla ComboBoxa)
-            DostepniLekarze = await _context.Lekarze.AsNoTracking().ToListAsync();
-            WybranyLekarz = DostepniLekarze.FirstOrDefault(l => l.IdLekarza == Wizyta.IdLekarza);
-            }
-        }
-
-        private async Task Zapisz()
-        {
-            bool zajety = await _context.Wizyty
-                .AnyAsync(w => w.IdLekarza == WybranyLekarz.IdLekarza &&
-                               w.DataGodzinaRozpoczecia == NowaData &&
-                               w.IdWizyty != _idWizyty);
-
-            if (zajety)
-            {
-                MessageBox.Show("Wybrany termin jest już zajęty.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (NowaData < DateTime.Now.AddHours(24))
-            {
-                MessageBox.Show("Nie można zmienić wizyty na mniej niż 24 godziny przed terminem.", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            Wizyta.DataGodzinaRozpoczecia = NowaData;
-            Wizyta.IdLekarza = WybranyLekarz.IdLekarza;
-
-            _context.Wizyty.Update(Wizyta);
-            await _context.SaveChangesAsync();
-
-            MessageBox.Show("Wizyta została zmieniona.", "Sukces", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
-        }
-
-        private bool CzyMoznaZapisac()
-        {
-            return Wizyta != null && WybranyLekarz != null && NowaData != default && NowaGodzina != default;
-        }
-
-        private void Anuluj()
-        {
-            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
-            window?.Close();
+            Application.Current.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => w.DataContext == this)
+                ?.Close();
         }
     }
 }

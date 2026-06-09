@@ -25,6 +25,9 @@ namespace SystemRezerwacji.Models
 
         public WizytaStatus Status { get; set; } = WizytaStatus.Planned;
 
+        public Lekarz? Lekarz { get; set; }
+        public Pacjent? Pacjent { get; set; }
+
     }
 }
 
